@@ -4,8 +4,6 @@ from tensorflow.keras.layers import Dense, Flatten, Conv2D
 
 from tensorflow.keras import Model
 
-tf.logging.set_verbosity(tf.logging.ERROR)
-
 
 mnist = tf.keras.datasets.mnist
 
