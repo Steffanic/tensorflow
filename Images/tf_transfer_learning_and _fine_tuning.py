@@ -145,3 +145,60 @@ for layer in base_model.layers[:fine_tune_at]:
     layer.trainable = False
 
 model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), optimizer=tf.keras.optimizers.RMSprop(lr=base_learning_rate/10), metrics=['accuracy'])
+
+model.summary()
+
+len(model.trainable_variables)
+
+fine_tune_epochs = 10
+
+total_epochs = initial_epochs + fine_tune_epochs
+
+history_fine = model.fit(train_dataset, epochs=total_epochs, initial_epoch=history.epoch[-1], validation_dataset=validation_dataset)
+
+acc += history_fine.history['accuracy']
+val_acc += history_fine.hiostory['val_accuracy']
+
+loss += history_fine.history['loss']
+val_loss += history_fine.hiostory['val_loss']
+
+plt.figure(figsize=(8,8))
+plt.subplot(2,1,1)
+plt.plot(acc, label='Training Accuracy')
+plt.plot(val_acc, label='Validation Accuracy')
+plt.ylim[0.8,1]
+plt.plot([initial_epochs-1, initial_epochs-1], plt.ylim(), label="Start Fine Tuning") # What a neat use of plt.ylim: it probably return the limits as a list!
+plt.legend(loc="lower right")
+plt.title("Training and Validation Accuracy")
+
+plt.subplot(2,1,2)
+plt.plot(loss, label="Training Loss")
+plt.plot(val_loss, label="Validation Loss")
+plt.ylim([0,1.0])
+plt.plot([initial_epochs-1, initial_epochs-1], plt.ylim(), label="Start Fine Tuning")
+plt.legend(loc="upper right")
+plt.title("Training and Validation Loss")
+plt.xlabel("Epochs")
+plt.show()
+
+loss, accuracy = model.evaluate(test_dataset)
+print(f'Test Accuracy : {accuracy}')
+
+
+# Now we demonstrate it's ability to identify dogs vs cats
+
+image_batch, label_batch = test_dataset.as_numpy_iterator().next()
+predictions = model.predict_on_batch(image_batch).flatten()
+
+predictions = tf.nn.sigmoid(predictions)
+predictions = tf.where(predictions<0.5, 0, 1)
+
+print(f"Predictions:\n{predictions.numpy()}")
+print(f'Labels:\n{label_batch}')
+
+plt.figure(figsize=(10,10))
+for i in range(9):
+    ax = plt.subplot(3,3,i+1)
+    plt.imshow(image_batch[i].astype("uint8"))
+    plt.title(class_names[predictions[i]])
+    plt.axis("off")
