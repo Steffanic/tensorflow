@@ -42339,3 +42339,7 @@ Text/aclImdb/train/neg/7736_2.txt
 Text/vectors.tsv
 Text/metadata.tsv
 Text/logs/
+Text/CommonLitReadability/commonlitreadabilityprize.zip
+Text/CommonLitReadability/sample_submission.csv
+Text/CommonLitReadability/test.csv
+Text/CommonLitReadability/train.csv
